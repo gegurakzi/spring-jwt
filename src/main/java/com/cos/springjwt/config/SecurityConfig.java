@@ -1,7 +1,9 @@
 package com.cos.springjwt.config;
 
 import com.cos.springjwt.config.jwt.JWTAuthenticationFilter;
+import com.cos.springjwt.config.jwt.JWTAuthorizationFilter;
 import com.cos.springjwt.filter.MyFilter1;
+import com.cos.springjwt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +22,7 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CorsFilter corsFilter;
+    private final UserRepository userRepository;
 
     @Bean
     public BCryptPasswordEncoder setBCryptPasswordEncoder(){
@@ -37,6 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .formLogin().disable()
                     .httpBasic().disable()
                     .addFilter(new JWTAuthenticationFilter(authenticationManager()))
+                    .addFilter(new JWTAuthorizationFilter(authenticationManager(), userRepository))
 
                 .authorizeRequests()
                     .antMatchers("/api/v1/user/**")
